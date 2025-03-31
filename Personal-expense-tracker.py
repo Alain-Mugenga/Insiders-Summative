@@ -329,3 +329,84 @@ def main():
                         user_id, username, budget = result
                         if budget == 0:
   
+ budget = float(input("Enter your budget (RWF): "))
+                            save_budget(conn, user_id, budget)
+                        logged_in = True
+                        print("\n********************************************************")
+                        print(f"*                Welcome, {username}!                 *")
+                        print("********************************************************\n")
+                        manager = BudgetManager(budget)  # Create an instance of BudgetManager
+                    else:
+                        print("Invalid username or password. Please try again.")
+
+                elif choice == '3':
+                    print("Exiting the application.")
+                    break
+
+                else:
+                    print("Invalid option. Please try again.")
+            else:
+                print(display_menu(language))
+                choice = input("Choose an option: ")
+
+                if choice == '1':
+                    category = input("Enter expense category: ")
+                    amount = Decimal(input("Enter amount: "))
+                    date = input("Enter date (YYYY-MM-DD): ")
+                    description = input("Enter description: ")
+                    payment_method = input("Enter payment method: ")
+                    add_expense(conn, user_id, category, amount, date, description, payment_method)
+                    manager.add_expense_local(amount, category, description)
+
+                elif choice == '2':
+                    get_expenses(conn, user_id)
+
+                elif choice == '3':
+                    year_month = input("Enter year and month (YYYY-MM): ")
+                    get_monthly_report(conn, user_id, year_month)
+
+                elif choice == '4':
+                    print(f"Remaining Budget: {manager.get_remaining_budget()} RWF")
+
+                elif choice == '5':
+                    new_password = getpass.getpass("Enter new password: ")
+                    change_password(conn, user_id, new_password)
+
+                elif choice == '6':
+                    print("Choose a language:")
+                    print(display_language_options(language))
+                    lang_choice = input("Enter your choice: ")
+                    if lang_choice == '1':
+                        language = "en"
+                    elif lang_choice == '2':
+                        language = "rw"
+                    elif lang_choice == '3':
+                        language = "fr"
+                    else:
+                        print("Invalid choice. Language remains unchanged.")
+                    print(f"Language changed to {'English' if language == 'en' else 'Kinyarwanda' if language == 'rw' else 'Français'}.")
+
+                elif choice == '7':
+                    save_budget(conn, user_id, manager.budget)
+                    manager.save_data()
+                    logged_in = False
+                    user_id = None
+                    print("Logged out successfully.")
+
+                elif choice == '0':
+                    # Go back to the previous menu or action
+                    print("Going back to the previous menu.")
+                    continue
+
+                elif choice == '00':
+                    # Return to the main menu
+                    logged_in = False
+                    print("Returning to the main menu.")
+
+                else:
+                    print("Invalid option. Please try again.")
+
+        conn.close()
+
+if __name__ == "__main__":
+    main()

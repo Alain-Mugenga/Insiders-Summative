@@ -13,15 +13,27 @@ def create_conn():
         conn = mysql.connector.connect(
             host='01e489f6c6f8.1009380b.alu-cod.online',
             port='37443',
-            database='sample',
-            user='attorney',
+            user='insiders',
             password='1234'
         )
         if conn.is_connected():
-            print('Connected to MySQL database')
+            print('Connected to MySQL server')
+
+        # Create the database if it doesn't exist
+        create_database(conn)
+
     except Error as e:
         print(f"Error while connecting to MySQL: {e}")
     return conn
+
+def create_database(connection):
+    cursor = connection.cursor()
+    try:
+        cursor.execute("CREATE DATABASE IF NOT EXISTS personal_expense_tracker;")
+        cursor.execute("USE personal_expense_tracker;")
+        print("Database 'personal_expense_tracker' created or already exists.")
+    except Error as e:
+        print(f"Error while creating database: {e}")
 
 def create_tables(connection):
     create_users_table = """
@@ -329,6 +341,7 @@ def main():
                     if result:
                         user_id, username, budget = result
                         if budget == 0:
+                            
                             budget = float(input("Enter your budget (RWF): "))
                             save_budget(conn, user_id, budget)
                         logged_in = True

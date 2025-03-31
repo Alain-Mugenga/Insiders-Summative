@@ -13,28 +13,16 @@ def create_conn():
         conn = mysql.connector.connect(
             host='01e489f6c6f8.1009380b.alu-cod.online',
             port='37443',
-            user='insiders',
+            database='sample',
+            user='attorney',
             password='1234'
         )
         if conn.is_connected():
-            print('Connected to MySQL server')
-
-        # Create the database if it doesn't exist
-        create_database(conn)
-
+            print('Connected to MySQL database')
     except Error as e:
         print(f"Error while connecting to MySQL: {e}")
     return conn
 
-def create_database(connection):
-    cursor = connection.cursor()
-    try:
-        cursor.execute("CREATE DATABASE IF NOT EXISTS personal_expense_tracker;")
-        cursor.execute("USE personal_expense_tracker;")
-        print("Database 'personal_expense_tracker' created or already exists.")
-    except Error as e:
-        print(f"Error while creating database: {e}")
-        
 def create_tables(connection):
     create_users_table = """
     CREATE TABLE IF NOT EXISTS users (
@@ -45,7 +33,7 @@ def create_tables(connection):
         budget BIGINT DEFAULT 0
     );
     """
-    
+
     create_expenses_table = """
     CREATE TABLE IF NOT EXISTS expenses (
         expense_id INT AUTO_INCREMENT PRIMARY KEY,
@@ -140,7 +128,8 @@ def get_monthly_report(connection, user_id, year_month):
     """
     cursor.execute(query, (user_id, year_month))
     expenses = cursor.fetchall()
-     if expenses:
+
+    if expenses:
         table = PrettyTable()
         table.field_names = ["Category", "Amount", "Date", "Description", "Payment Method"]
         for expense in expenses:
@@ -204,7 +193,6 @@ class BudgetManager:
         elif remaining < (self.budget * Decimal('0.1')):
             print("Alert: You are about to finish your budget.")
 
-   
     def save_data(self, filename="budget_data.json"):
         """Saves the budget and expense data to a JSON file."""
         data = {
@@ -272,6 +260,7 @@ def display_menu(language):
         0. Retour
         00. Menu Principal
         """
+
 def display_login_menu(language):
     if language == "en":
         return """
@@ -340,8 +329,7 @@ def main():
                     if result:
                         user_id, username, budget = result
                         if budget == 0:
-  
- budget = float(input("Enter your budget (RWF): "))
+                            budget = float(input("Enter your budget (RWF): "))
                             save_budget(conn, user_id, budget)
                         logged_in = True
                         print("\n********************************************************")

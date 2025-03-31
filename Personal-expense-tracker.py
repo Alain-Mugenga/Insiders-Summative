@@ -192,71 +192,71 @@ class BudgetManager:
         elif remaining < (self.budget * Decimal('0.1')):
             print("Alert: You are about to finish your budget.")
 
+   
     def save_data(self, filename="budget_data.json"):
-                """Saves the budget and expense data to a JSON file."""
-                        data = {
-                                            "budget": float(self.budget),  # Convert Decimal to float
-                                                        "expenses": [
-                                                                            {"amount": float(expense['amount']), "category": expense['category'], "description": expense['description']}
-                                                                                            for expense in self.expenses
-                                                                                                        ]
-                                                                }
-                                with open(filename, "w") as file:
-                                                json.dump(data, file, indent=4)
-                                                        print("Data saved successfully.")
+        """Saves the budget and expense data to a JSON file."""
+        data = {
+            "budget": float(self.budget),  # Convert Decimal to float
+            "expenses": [
+                {"amount": float(expense['amount']), "category": expense['category'], "description": expense['description']}
+                for expense in self.expenses
+            ]
+        }
+        with open(filename, "w") as file:
+            json.dump(data, file, indent=4)
+        print("Data saved successfully.")
 
-                                                            def load_data(self, filename="budget_data.json"):
-                                                                        """Loads budget and expense data from a JSON file."""
-                                                                                try:
-                                                                                                with open(filename, "r") as file:
-                                                                                                                    data = json.load(file)
-                                                                                                                                    self.budget = Decimal(data["budget"])  # Retrieve budget value
-                                                                                                                                                    self.expenses = [
-                                                                                                                                                                                {"amount": Decimal(str(expense['amount'])), "category": expense['category'], "description": expense['description']}
-                                                                                                                                                                                                    for expense in data["expenses"]
-                                                                                                                                                                                                                    ]  # Retrieve list of expenses
-                                                                                                                                                                    print("Data loaded successfully.")
-                                                                                                                                                                            except FileNotFoundError:
-                                                                                                                                                                                            print("No saved data found.")
+    def load_data(self, filename="budget_data.json"):
+        """Loads budget and expense data from a JSON file."""
+        try:
+            with open(filename, "r") as file:
+                data = json.load(file)
+                self.budget = Decimal(data["budget"])  # Retrieve budget value
+                self.expenses = [
+                    {"amount": Decimal(str(expense['amount'])), "category": expense['category'], "description": expense['description']}
+                    for expense in data["expenses"]
+                ]  # Retrieve list of expenses
+                print("Data loaded successfully.")
+        except FileNotFoundError:
+            print("No saved data found.")
 
-                                                                                                                                                                                            def display_menu(language):
-                                                                                                                                                                                                    if language == "en":
-                                                                                                                                                                                                                return """
-                                                                                                                                                                                                                        Options:
-                                                                                                                                                                                                                                1. Log Expense
-                                                                                                                                                                                                                                        2. View Expenses
-                                                                                                                                                                                                                                                3. Monthly Report
-                                                                                                                                                                                                                                                        4. Check Budget
-                                                                                                                                                                                                                                                                5. Change Password
-                                                                                                                                                                                                                                                                        6. Change Language
-                                                                                                                                                                                                                                                                                7. Save & Exit
-                                                                                                                                                                                                                                                                                        0. Go Back
-                                                                                                                                                                                                                                                                                                00. Main Menu
-                                                                                                                                                                                                                                                                                                        """
-                                                                                                                                                                                                                                                                                                            elif language == "rw":
-                                                                                                                                                                                                                                                                                                                        return """
-                                                                                                                                                                                                                                                                                                                                Amahitamo:
-                                                                                                                                                                                                                                                                                                                                        1. Kwandika ibyakoreshejwe
-                                                                                                                                                                                                                                                                                                                                                2. Reba amafaranga yakoreshejwe
-                                                                                                                                                                                                                                                                                                                                                        3. Raporo ya buri kwezi
-                                                                                                                                                                                                                                                                                                                                                                4. Reba ingengo yimari
-                                                                                                                                                                                                                                                                                                                                                                        5. Hindura Ijambo Banga
-                                                                                                                                                                                                                                                                                                                                                                                6. Hindura Ururimi
-                                                                                                                                                                                                                                                                                                                                                                                        7. Gusohoka
-                                                                                                                                                                                                                                                                                                                                                                                                0. Subira Inyuma
-                                                                                                                                                                                                                                                                                                                                                                                                        00. Ahabanza
-                                                                                                                                                                                                                                                                                                                                                                                                                """
-                                                                                                                                                                                                                                                                                                                                                                                                                    elif language == "fr":
-                                                                                                                                                                                                                                                                                                                                                                                                                                return """
-                                                                                                                                                                                                                                                                                                                                                                                                                                        Options:
-                                                                                                                                                                                                                                                                                                                                                                                                                                                1. Enregistrer une dépense
-                                                                                                                                                                                                                                                                                                                                                                                                                                                        2. Voir les dépenses
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                3. Rapport mensuel
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                        4. Vérifier le budget
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                5. Changer le mot de passe
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        6. Changer de langue
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                7. Sauvegarder & Quitter
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        0. Retour
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                00. Menu Principal
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        """
-
+def display_menu(language):
+    if language == "en":
+        return """
+        Options:
+        1. Log Expense
+        2. View Expenses
+        3. Monthly Report
+        4. Check Budget
+        5. Change Password
+        6. Change Language
+        7. Save & Exit
+        0. Go Back
+        00. Main Menu
+        """
+    elif language == "rw":
+        return """
+        Amahitamo:
+        1. Kwandika ibyakoreshejwe
+        2. Reba amafaranga yakoreshejwe
+        3. Raporo ya buri kwezi
+        4. Reba ingengo yimari
+        5. Hindura Ijambo Banga
+        6. Hindura Ururimi
+        7. Gusohoka
+        0. Subira Inyuma
+        00. Ahabanza
+        """
+    elif language == "fr":
+        return """
+        Options:
+        1. Enregistrer une dépense
+        2. Voir les dépenses
+        3. Rapport mensuel
+        4. Vérifier le budget
+        5. Changer le mot de passe
+        6. Changer de langue
+        7. Sauvegarder & Quitter
+        0. Retour
+        00. Menu Principal
+        """

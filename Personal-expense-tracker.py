@@ -128,3 +128,66 @@ def get_monthly_report(connection, user_id, year_month):
     """
     cursor.execute(query, (user_id, year_month))
     expenses = cursor.fetchall()
+     if expenses:
+        table = PrettyTable()
+        table.field_names = ["Category", "Amount", "Date", "Description", "Payment Method"]
+        for expense in expenses:
+            table.add_row(expense)
+        print(table)
+
+        # Calculate total expenses for the month
+        total_expenses = sum(Decimal(expense[1]) for expense in expenses)
+        print(f"\nTotal Expenses for {year_month}: {total_expenses} RWF")
+
+        # Check budget status
+        cursor.execute("SELECT budget FROM users WHERE user_id = %s", (user_id,))
+        budget = cursor.fetchone()[0]
+        remaining_budget = budget - total_expenses
+
+        print("\nBudget Status:")
+        if remaining_budget <= 0:
+            print("Warning: You have no money left!")
+        elif remaining_budget < (budget * Decimal('0.1')):
+            print("Alert: You are about to finish your budget.")
+        else:
+            print("You are within your budget.")
+
+    else:
+        print("No expenses found for the specified month.")
+
+class BudgetManager:
+    def __init__(self, budget):
+        """Initialize the budget and create an empty list for expenses."""
+        self.budget = Decimal(budget)  # Total budget in Rwandan Francs (RWF)
+        self.expenses = []  # List to store expense records
+
+    def add_expense_local(self, amount, category, description=""):
+        """Adds a new expense to the expense list and checks the budget."""
+        if amount <= 0:
+            print("Invalid amount. Expense should be greater than zero.")
+            return
+
+        # Append expense details as a dictionary to the expenses list
+        self.expenses.append({"amount": Decimal(amount), "category": category, "description": description})
+        self.check_budget()
+
+    def get_total_expense(self):
+        """Calculates and returns the total money spent."""
+        return sum(Decimal(expense['amount']) for expense in self.expenses)
+
+    def get_remaining_budget(self):
+        """Calculates and returns the remaining budget."""
+        return self.budget - self.get_total_expense()
+
+    def check_budget(self):
+        """Checks if the user is approaching or exceeding their budget."""
+        total_spent = self.get_total_expense()
+        remaining = self.get_remaining_budget()
+
+        print(f"Total Spent: {total_spent} RWF | Remaining Budget: {remaining} RWF")
+
+        # Notify the user if they have exceeded or are close to exceeding their budget
+        if remaining <= 0:
+            print("Warning: You have no money left!")
+        elif remaining < (self.budget * Decimal('0.1')):
+            print("Alert: You are about to finish your budget.")

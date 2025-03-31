@@ -260,3 +260,72 @@ def display_menu(language):
         0. Retour
         00. Menu Principal
         """
+def display_login_menu(language):
+    if language == "en":
+        return """
+        Options:
+        1. Register
+        2. Log In
+        3. Exit
+        """
+    elif language == "rw":
+        return """
+        Ibyiciro:
+        1. Kwiyandikisha
+        2. Kwinjira
+        3. Sohoka
+        """
+    elif language == "fr":
+        return """
+        Options:
+        1. S'inscrire
+        2. Se connecter
+        3. Quitter
+        """
+
+def display_language_options(language):
+    options = []
+    if language != "en":
+        options.append("1. English")
+    if language != "rw":
+        options.append("2. Kinyarwanda")
+    if language != "fr":
+        options.append("3. Français")
+    return "\n".join(options)
+
+def main():
+    conn = create_conn()
+    if conn is not None:
+        # Create tables if they don't exist
+        create_tables(conn)
+
+        language = "en"
+        logged_in = False
+        user_id = None
+        manager = None
+        username = None
+
+        print("\n********************************************************")
+        print("*        Welcome to the Personal Expense Tracker!    *")
+        print("********************************************************\n")
+
+        while True:
+            if not logged_in:
+                print(display_login_menu(language))
+                choice = input("Choose an option: ")
+
+                if choice == '1':
+                    username = input("Enter username: ")
+                    email = input("Enter email: ")
+                    password = getpass.getpass("Enter password: ")
+                    budget = float(input("Enter your budget (RWF): "))
+                    add_user(conn, username, email, password, budget)
+
+                elif choice == '2':
+                    username = input("Enter your username to log in: ")
+                    password = getpass.getpass("Enter your password: ")
+                    result = user_exists(conn, username, password)
+                    if result:
+                        user_id, username, budget = result
+                        if budget == 0:
+  
